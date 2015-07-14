@@ -2,11 +2,37 @@
 
 // Declare app level module which depends on views, and components
 angular.module('myApp', [
-  'ngRoute',
-  'myApp.view1',
-  'myApp.view2',
-  'myApp.version'
-]).
-config(['$routeProvider', function($routeProvider) {
-  $routeProvider.otherwise({redirectTo: '/view1'});
-}]);
+  'ui.router',
+  'myApp.company',
+  'myApp.user',
+  'myApp.session'
+])
+.config(function($stateProvider,
+                 $urlRouterProvider)
+{
+    $stateProvider
+    .state('root', {
+        'abstract': true,
+        resolve: {
+            companies: function(CompanyService) {
+                return CompanyService.all();
+            }
+        },
+        url: '/',
+        views: {
+            'session-panel': {
+                controller: 'SessionPanelController',
+                templateUrl: 'templates/session-panel.html'
+            }
+        }
+    });
+
+    $urlRouterProvider
+        .when('', '/users/')
+        .when('/', '/users/');
+})
+.run(function($rootScope, $window) {
+    $rootScope.$on('$stateChangeError',
+                   $window.console.error.bind($window.console));
+})
+;

@@ -1,0 +1,9 @@
+<div>
+    session panel<br >
+    <select class="form-control input-sm"
+        ng-model="company"
+        ng-options="company.id as company.name for company in companies"
+        required>
+        <option value="">Select company&hellip;</option>
+    </select>
+</div>
