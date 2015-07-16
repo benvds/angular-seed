@@ -18,6 +18,9 @@ angular.module('myApp.user', [
         resolve: {
             users: function($state, SessionService, UserService) {
                 return UserService.all(SessionService.resourceParams($state.nextState.name));
+            },
+            filters: function($state, SessionService) {
+                return SessionService.resourceParams($state.nextState.name).filters;
             }
         },
         views: {
@@ -45,11 +48,11 @@ angular.module('myApp.user', [
 })
 .service('UserService', function($timeout) {
     var collection = [
-        { id: 3, name: 'Bas', companyId: 1 },
-        { id: 2, name: 'Bob', companyId: 2 },
-        { id: 1, name: 'Ben', companyId: 1 }
+        { id: 3, name: 'Bas', companyId: 1, isHandsome: false },
+        { id: 2, name: 'Bob', companyId: 2, isHandsome: true },
+        { id: 1, name: 'Ben', companyId: 1, isHandsome: true }
     ];
-    var FILTER_KEYS = ['companyId'];
+    var FILTER_KEYS = ['companyId', 'isHandsome'];
 
     function all(params) {
         return $timeout(function() {
@@ -81,16 +84,35 @@ angular.module('myApp.user', [
         get: get
     };
 })
-.controller('UsersIndexController', function($scope, $state, SessionService, users) {
+.controller('UsersIndexController', function($scope,
+    $state,
+    SessionService,
+    filters,
+    users)
+{
     $scope.users = users;
+    $scope.filters = filters;
+    $scope.handsomeFilterOptions = [
+        { value: true, label: 'handsome' },
+        { value: false, label: 'ugly' }
+    ];
 
     $scope.sort = function(attribute) {
         SessionService.sort($state.current.name, attribute);
     };
+
+    $scope.updateIsHandsomeFilter = function(value) {
+        SessionService.routeFilters($state.current.name, {
+            isHandsome: value
+        });
+    };
+
+    $scope.clear = SessionService.clearRouteFilters($state.current.name);
 })
 .controller('UsersShowController', function($scope,
-                                                 SessionService,
-                                                 user)
+    $state,
+    SessionService,
+    user)
 {
     $scope.user = user;
 })

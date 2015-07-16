@@ -6,11 +6,11 @@ angular.module('myApp.session', [])
     var store = $window.sessionStorage;
 
     function get(key) {
-        return store.getItem(key);
+        return angular.fromJson(store.getItem(key));
     }
 
     function set(key, value) {
-        return store.setItem(key, value);
+        return store.setItem(key, angular.toJson(value));
     }
 
     function clear() {
@@ -37,41 +37,66 @@ angular.module('myApp.session', [])
         });
     }
 
-    function resourceParams(stateName) {
+    // falls back to empty object
+    function getStorageObject(key) {
+        return SessionStorageAdapter.get(key) || {};
+    }
 
-        var sorts = angular.fromJson(SessionStorageAdapter.get('sorts') || '{}');
-        var filters = angular.fromJson(SessionStorageAdapter.get('filters') || '{}');
+
+    function resourceParams(stateName) {
+        var sorts = getStorageObject('sorts');
+        var globalFilters = getStorageObject('globalFilters');
+        var routeFilters = getStorageObject('routeFilters');
 
         return {
             sort: sorts[stateName],
-            filters: filters
+            filters: _.merge({}, globalFilters, routeFilters[stateName])
         };
     }
 
     function sort(stateName, attribute) {
-        var sorts = angular.fromJson(SessionStorageAdapter.get('sorts') || '{}')
+        var sorts = getStorageObject('sorts');
         sorts[stateName] = attribute;
-        SessionStorageAdapter.set('sorts', angular.toJson(sorts));
+        SessionStorageAdapter.set('sorts', sorts);
 
         reloadState();
     }
 
-    function filters(filters) {
-        // TODO overwrite filters
-        SessionStorageAdapter.set('filters', angular.toJson(filters));
+    function setGlobalFilters(globalFilters) {
+        var filters = getStorageObject('globalFilters');
+
+        SessionStorageAdapter.set('globalFilters',
+            _.merge(filters, globalFilters));
         reloadState();
     }
 
-    function clearSessionFilters() {
+    function setRouteFilters(route, routeFilters) {
+        var filters = getStorageObject('routeFilters');
+        filters[route] = routeFilters;
+
+        SessionStorageAdapter.set('routeFilters', filters);
+        reloadState();
+    }
+
+    function clearGlobalFilters() {
+        // clears both global & route filters
         SessionStorageAdapter.clear();
         reloadState();
+    }
+
+    function clearRouteFilters(route) {
+        return function() {
+            setRouteFilters(route, {});
+        }
     }
 
     return {
         resourceParams: resourceParams,
         sort: sort,
-        filters: filters,
-        clearSessionFilters: clearSessionFilters
+        globalFilters: setGlobalFilters,
+        routeFilters: setRouteFilters,
+        clearGlobalFilters: clearGlobalFilters,
+        clearRouteFilters: clearRouteFilters
     };
 })
 .controller('SessionPanelController', function($scope,
@@ -83,12 +108,11 @@ angular.module('myApp.session', [])
     $scope.company = company;
 
     $scope.updateCompany = function(company) {
-        console.log('company selected', company);
-        SessionService.filters({
+        SessionService.globalFilters({
             companyId: company.id
         });
     };
 
-    $scope.clear = SessionService.clearSessionFilters;
+    $scope.clear = SessionService.clearGlobalFilters;
 })
 ;

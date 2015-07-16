@@ -1,16 +1,30 @@
 <h1>Users</h1>
 
+<select class="form-control input-sm"
+    ng-model="filters.isHandsome"
+    ng-change="updateIsHandsomeFilter(filters.isHandsome)"
+    ng-selected="filters.isHandsome"
+    ng-options="option.value as option.label for option in handsomeFilterOptions"
+    required>
+    <option value="">filter handsomeness&hellip;</option>
+</select>
+<a ng-click="clear()">clear</a>
+
 <table border="1">
     <thead>
         <tr>
             <th ng-click="sort('id')">id</th>
             <th ng-click="sort('name')">name</th>
+            <th ng-click="sort('companyId')">company id</th>
+            <th ng-click="sort('isHandsome')">is handsome</th>
         </tr>
     </thead>
     <tbody>
         <tr ng-repeat="user in users">
             <td>{{user.id}}</td>
             <td><a ui-sref="root.users.show({ id: user.id })">{{user.name}}</a></td>
+            <td>{{user.companyId}}</td>
+            <td>{{user.isHandsome}}</td>
         </tr>
     </tbody>
 </table>
