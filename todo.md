@@ -1,7 +1,8 @@
 # Todo
 
-- add nested route filter (e.g company -> users)
-- clear route sorting on route filter change 
+- clear session filters
+- make distinction between sessionFilters & route params
+- clear route sorting on route filter change
 - clear all route state params on sessionFilter change
 - nested views (companies -> users)
 - update collection item via service

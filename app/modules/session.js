@@ -22,6 +22,8 @@ angular.module('myApp.session', [])
                                     $stateParams,
                                     SessionStorageAdapter)
 {
+    // TODO(benvds): make distinction between sessionFilters & route params
+    
     function reloadState() {
         $state.transitionTo($state.current, $stateParams, {
             reload: true,

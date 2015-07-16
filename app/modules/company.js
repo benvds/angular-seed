@@ -32,6 +32,9 @@ angular.module('myApp.company', [
             company: function($stateParams, CompanyService, SessionService) {
                 return CompanyService.get(Number($stateParams.id),
                                           SessionService.resourceParams());
+            },
+            users: function($state, SessionService, UserService) {
+                return UserService.all(SessionService.resourceParams($state.nextState.name));
             }
         },
         views: {
@@ -53,13 +56,23 @@ angular.module('myApp.company', [
         { id: 3, name: 'Sonny & Sons' },
         { id: 2, name: 'Indigo Industries' }
     ];
+    var FILTER_KEYS = [];
 
     function all(params) {
         return $timeout(function() {
             if (!params) {
                 return collection;
             } else {
-                return _.sortBy(collection, params.sort);
+                var queried = _.cloneDeep(collection);
+
+                var filters = _.pick(params.filters || [], FILTER_KEYS);
+                queried = _.filter(queried, filters);
+
+                if (params.sort) {
+                    queried = _.sortBy(queried, params.sort);
+                }
+
+                return queried;
             }
         }, 50);
     }
@@ -88,8 +101,10 @@ angular.module('myApp.company', [
 })
 .controller('CompaniesShowController', function($scope,
                                                  SessionService,
-                                                 company)
+                                                 company,
+                                                 users)
 {
     $scope.company = company;
+    $scope.users = users;
 })
 ;

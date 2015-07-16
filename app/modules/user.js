@@ -49,13 +49,23 @@ angular.module('myApp.user', [
         { id: 2, name: 'Bob', companyId: 2 },
         { id: 1, name: 'Ben', companyId: 1 }
     ];
+    var FILTER_KEYS = ['companyId'];
 
     function all(params) {
         return $timeout(function() {
             if (!params) {
                 return collection;
             } else {
-                return _.sortBy(collection, params.sort);
+                var queried = _.cloneDeep(collection);
+
+                var filters = _.pick(params.filters || [], FILTER_KEYS);
+                queried = _.filter(queried, filters);
+
+                if (params.sort) {
+                    queried = _.sortBy(queried, params.sort);
+                }
+
+                return queried;
             }
         }, 50);
     }
