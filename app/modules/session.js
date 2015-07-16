@@ -62,6 +62,12 @@ angular.module('myApp.session', [])
         reloadState();
     }
 
+    function clearRouteSort(stateName) {
+        var sorts = getStorageObject('sorts');
+        delete sorts[stateName];
+        SessionStorageAdapter.set('sorts', sorts);
+    }
+
     function setGlobalFilters(globalFilters) {
         var filters = getStorageObject('globalFilters');
 
@@ -75,6 +81,7 @@ angular.module('myApp.session', [])
         filters[route] = routeFilters;
 
         SessionStorageAdapter.set('routeFilters', filters);
+        clearRouteSort(route);
         reloadState();
     }
 
