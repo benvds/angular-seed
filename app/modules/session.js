@@ -13,6 +13,10 @@ angular.module('myApp.session', [])
         return store.setItem(key, angular.toJson(value));
     }
 
+    function remove(key) {
+        return store.removeItem(key);
+    }
+
     function clear() {
         return store.clear();
     }
@@ -20,6 +24,7 @@ angular.module('myApp.session', [])
     return {
         get: get,
         set: set,
+        remove: remove,
         clear: clear
     };
 })
