@@ -14,7 +14,7 @@ angular.module('myApp', [
     // allows resolves to request the next state
     $provide.decorator('$state', function($delegate, $rootScope) {
         $rootScope.$on('$stateChangeStart', function(event, state, params) {
-            console.log('state change start', arguments);
+            // console.log('state change start', arguments);
             $delegate.nextState = state;
             $delegate.nextParams = params;
         });

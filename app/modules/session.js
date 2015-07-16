@@ -43,28 +43,28 @@ angular.module('myApp.session', [])
     }
 
 
-    function resourceParams(stateName) {
+    function resourceParams(routeStateName) {
         var sorts = getStorageObject('sorts');
         var globalFilters = getStorageObject('globalFilters');
         var routeFilters = getStorageObject('routeFilters');
 
         return {
-            sort: sorts[stateName],
-            filters: _.merge({}, globalFilters, routeFilters[stateName])
+            sort: sorts[routeStateName],
+            filters: _.merge({}, globalFilters, routeFilters[routeStateName])
         };
     }
 
-    function sort(stateName, attribute) {
+    function sort(routeStateName, attribute) {
         var sorts = getStorageObject('sorts');
-        sorts[stateName] = attribute;
+        sorts[routeStateName] = attribute;
         SessionStorageAdapter.set('sorts', sorts);
 
         reloadState();
     }
 
-    function clearRouteSort(stateName) {
+    function clearRouteSort(routeStateName) {
         var sorts = getStorageObject('sorts');
-        delete sorts[stateName];
+        delete sorts[routeStateName];
         SessionStorageAdapter.set('sorts', sorts);
     }
 
@@ -76,12 +76,12 @@ angular.module('myApp.session', [])
         reloadState();
     }
 
-    function setRouteFilters(route, routeFilters) {
+    function setRouteFilters(routeStateName, routeFilters) {
         var filters = getStorageObject('routeFilters');
-        filters[route] = routeFilters;
+        filters[routeStateName] = routeFilters;
 
         SessionStorageAdapter.set('routeFilters', filters);
-        clearRouteSort(route);
+        clearRouteSort(routeStateName);
         reloadState();
     }
 
@@ -91,9 +91,9 @@ angular.module('myApp.session', [])
         reloadState();
     }
 
-    function clearRouteFilters(route) {
+    function clearRouteFilters(routeStateName) {
         return function() {
-            setRouteFilters(route, {});
+            setRouteFilters(routeStateName, {});
         }
     }
 
