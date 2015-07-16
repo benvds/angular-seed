@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('myApp.user', [
-    'ui.router',
-    'bmi.collection'
+    'ui.router'
 ])
 .config(function($stateProvider,
                  $urlRouterProvider)
