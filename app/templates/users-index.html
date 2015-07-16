@@ -1,3 +1,16 @@
 <h1>Users</h1>
 
-<pre>{{ users | json }}</pre>
+<table border="1">
+    <thead>
+        <tr>
+            <th ng-click="sort('id')">id</th>
+            <th ng-click="sort('name')">name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="user in users">
+            <td>{{user.id}}</td>
+            <td><a ui-sref="root.users.show({ id: user.id })">{{user.name}}</a></td>
+        </tr>
+    </tbody>
+</table>

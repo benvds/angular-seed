@@ -26,10 +26,6 @@ angular.module('myApp', [
             }
         }
     });
-
-    $urlRouterProvider
-        .when('', '/users/')
-        .when('/', '/users/');
 })
 .run(function($rootScope, $window) {
     $rootScope.$on('$stateChangeError',
