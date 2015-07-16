@@ -13,9 +13,14 @@ angular.module('myApp.session', [])
         return store.setItem(key, value);
     }
 
+    function clear() {
+        return store.clear();
+    }
+
     return {
         get: get,
-        set: set
+        set: set,
+        clear: clear
     };
 })
 .service('SessionService', function($state,
@@ -23,7 +28,7 @@ angular.module('myApp.session', [])
                                     SessionStorageAdapter)
 {
     // TODO(benvds): make distinction between sessionFilters & route params
-    
+
     function reloadState() {
         $state.transitionTo($state.current, $stateParams, {
             reload: true,
@@ -57,10 +62,16 @@ angular.module('myApp.session', [])
         reloadState();
     }
 
+    function clearSessionFilters() {
+        SessionStorageAdapter.clear();
+        reloadState();
+    }
+
     return {
         resourceParams: resourceParams,
         sort: sort,
-        filters: filters
+        filters: filters,
+        clearSessionFilters: clearSessionFilters
     };
 })
 .controller('SessionPanelController', function($scope,
@@ -77,5 +88,7 @@ angular.module('myApp.session', [])
             companyId: company.id
         });
     };
+
+    $scope.clear = SessionService.clearSessionFilters;
 })
 ;
