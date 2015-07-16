@@ -33,8 +33,16 @@ angular.module('myApp.company', [
                 return CompanyService.get(Number($stateParams.id),
                                           SessionService.resourceParams());
             },
-            users: function($state, SessionService, UserService) {
-                return UserService.all(SessionService.resourceParams($state.nextState.name));
+            users: function($state, $stateParams, SessionService, UserService) {
+                // NOTE THIS IS IMPORTANT, if not overriden this leads to
+                // unexpected behaviour, therefore refactor so it cannot be
+                // forgotten
+                var params = _.merge({},
+                    SessionService.resourceParams($state.nextState.name),
+                    { filters:
+                        { companyId: Number($stateParams.id) }
+                    });
+                return UserService.all(params);
             }
         },
         views: {
