@@ -16,8 +16,8 @@ angular.module('myApp.user', [
     .state('root.users.index', {
         url: '',
         resolve: {
-            users: function(SessionService, UserService) {
-                return UserService.all(SessionService.resourceParams());
+            users: function($state, SessionService, UserService) {
+                return UserService.all(SessionService.resourceParams($state.nextState.name));
             }
         },
         views: {
@@ -71,11 +71,11 @@ angular.module('myApp.user', [
         get: get
     };
 })
-.controller('UsersIndexController', function($scope, SessionService, users) {
+.controller('UsersIndexController', function($scope, $state, SessionService, users) {
     $scope.users = users;
 
     $scope.sort = function(attribute) {
-        SessionService.sort(attribute);
+        SessionService.sort($state.current.name, attribute);
     };
 })
 .controller('UsersShowController', function($scope,

@@ -7,15 +7,30 @@ angular.module('myApp', [
   'myApp.user',
   'myApp.session'
 ])
-.config(function($stateProvider,
+.config(function($provide,
+                 $stateProvider,
                  $urlRouterProvider)
 {
+    // allows resolves to request the next state
+    $provide.decorator('$state', function($delegate, $rootScope) {
+        $rootScope.$on('$stateChangeStart', function(event, state, params) {
+            $delegate.nextState = state;
+            $delegate.nextParams = params;
+        });
+        return $delegate;
+    });
+
     $stateProvider
     .state('root', {
         'abstract': true,
         resolve: {
             companies: function(CompanyService) {
                 return CompanyService.all();
+            },
+            company: function(SessionService, companies) {
+                var resourceParams = SessionService.resourceParams();
+                return _.find(companies,
+                    { id: resourceParams.filters.companyId });
             }
         },
         url: '/',

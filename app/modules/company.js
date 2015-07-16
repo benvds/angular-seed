@@ -15,8 +15,8 @@ angular.module('myApp.company', [
     .state('root.companies.index', {
         url: '',
         resolve: {
-            companies: function(CompanyService, SessionService) {
-                return CompanyService.all(SessionService.resourceParams());
+            companies: function($state, CompanyService, SessionService) {
+                return CompanyService.all(SessionService.resourceParams($state.nextState.name));
             }
         },
         views: {
@@ -76,13 +76,14 @@ angular.module('myApp.company', [
     };
 })
 .controller('CompaniesIndexController', function($scope,
+                                                 $state,
                                                  SessionService,
                                                  companies)
 {
     $scope.companies = companies;
 
     $scope.sort = function(attribute) {
-        SessionService.sort(attribute);
+        SessionService.sort($state.current.name, attribute);
     };
 })
 .controller('CompaniesShowController', function($scope,

@@ -2,7 +2,8 @@
     session panel<br >
     <select class="form-control input-sm"
         ng-model="company"
-        ng-options="company.id as company.name for company in companies"
+        ng-change="updateCompany(company)"
+        ng-options="company as company.name for company in companies"
         required>
         <option value="">Select company&hellip;</option>
     </select>

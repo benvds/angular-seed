@@ -1,6 +1,7 @@
 # Todo
 
-- route state use case (e.g. sorting, via SessionService)
-- app state use case (e.g. filter)
+- add nested route filter (e.g company -> users)
+- clear route sorting on route filter change 
+- clear all route state params on sessionFilter change
 - nested views (companies -> users)
 - update collection item via service

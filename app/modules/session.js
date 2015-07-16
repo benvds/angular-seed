@@ -30,24 +30,50 @@ angular.module('myApp.session', [])
         });
     }
 
-    function sort(attribute) {
-        SessionStorageAdapter.set('sort', attribute);
-        reloadState();
-    }
+    function resourceParams(stateName) {
 
-    function resourceParams() {
+        var sorts = angular.fromJson(SessionStorageAdapter.get('sorts') || '{}');
+        var filters = angular.fromJson(SessionStorageAdapter.get('filters') || '{}');
+
         return {
-            sort: SessionStorageAdapter.get('sort')
+            sort: sorts[stateName],
+            filters: filters
         };
     }
 
+    function sort(stateName, attribute) {
+        var sorts = angular.fromJson(SessionStorageAdapter.get('sorts') || '{}')
+        sorts[stateName] = attribute;
+        SessionStorageAdapter.set('sorts', angular.toJson(sorts));
+
+        reloadState();
+    }
+
+    function filters(filters) {
+        // TODO overwrite filters
+        SessionStorageAdapter.set('filters', angular.toJson(filters));
+        reloadState();
+    }
+
     return {
+        resourceParams: resourceParams,
         sort: sort,
-        resourceParams: resourceParams
+        filters: filters
     };
 })
-.controller('SessionPanelController', function($scope, companies) {
+.controller('SessionPanelController', function($scope,
+                                               SessionService,
+                                               companies,
+                                               company)
+{
     $scope.companies = companies;
-    $scope.company = undefined;
+    $scope.company = company;
+
+    $scope.updateCompany = function(company) {
+        console.log('company selected', company);
+        SessionService.filters({
+            companyId: company.id
+        });
+    };
 })
 ;
